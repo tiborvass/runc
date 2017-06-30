@@ -172,6 +172,7 @@ func (l *LinuxFactory) Create(id string, config *configs.Config) (Container, err
 	}
 	containerRoot := filepath.Join(l.Root, id)
 	if _, err := os.Stat(containerRoot); err == nil {
+		panic("yolo")
 		return nil, newGenericError(fmt.Errorf("container with id exists: %v", id), IdInUse)
 	} else if !os.IsNotExist(err) {
 		return nil, newGenericError(err, SystemError)
