@@ -283,7 +283,7 @@ type LinuxMemory struct {
 	// Kernel memory limit for tcp (in bytes)
 	KernelTCP *int64 `json:"kernelTCP,omitempty"`
 	// How aggressive the kernel will swap memory pages.
-	Swappiness *uint64 `json:"swappiness,omitempty"`
+	Swappiness *int64 `json:"swappiness,omitempty"`
 }
 
 // LinuxCPU for Linux cgroup 'cpu' resource management
