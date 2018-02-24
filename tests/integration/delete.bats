@@ -9,6 +9,7 @@ function setup() {
 
 function teardown() {
   teardown_busybox
+  teardown_kill_zombies
 }
 
 @test "runc delete" {
@@ -49,4 +50,21 @@ function teardown() {
 
   runc state test_busybox
   [ "$status" -ne 0 ]
+}
+
+@test "runc delete --force race condition" {
+  # run busybox detached
+  runc run -d --console-socket $CONSOLE_SOCKET test_busybox &
+  pid=$!
+
+  sleep 0.5
+
+  # check state
+  testcontainer test_busybox created
+
+  # force delete test_busybox
+  runc delete --force test_busybox
+
+  # fail test if kill succeeded because process should have not been running
+  ! kill -9 $pid
 }

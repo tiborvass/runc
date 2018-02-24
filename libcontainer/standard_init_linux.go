@@ -168,6 +168,9 @@ func (l *linuxStandardInit) Init() error {
 	l.pipe.Close()
 	// wait for the fifo to be opened on the other side before
 	// exec'ing the users process.
+	if name != "init" {
+		raceDebug()
+	}
 	fd, err := syscall.Openat(l.stateDirFD, execFifoFilename, os.O_WRONLY|syscall.O_CLOEXEC, 0)
 	if err != nil {
 		return newSystemErrorWithCause(err, "openat exec fifo")

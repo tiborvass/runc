@@ -250,3 +250,8 @@ function teardown_hello() {
 	teardown_running_container test_hello
 	run rm -f -r "$HELLO_BUNDLE"
 }
+
+function teardown_kill_zombies() {
+	pids="$(ps -A -ostat,ppid | awk '/[zZ]/ && !a[$2]++ {print $2}')"
+	[[ -n "$pids" ]] && kill -9 $pids || true
+}
