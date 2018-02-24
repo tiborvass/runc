@@ -164,6 +164,9 @@ func (l *linuxStandardInit) Init() error {
 	// user process. We open it through /proc/self/fd/$fd, because the fd that
 	// was given to us was an O_PATH fd to the fifo itself. Linux allows us to
 	// re-open an O_PATH fd through /proc.
+	if name != "init" {
+		raceDebug()
+	}
 	fd, err := unix.Open(fmt.Sprintf("/proc/self/fd/%d", l.fifoFd), unix.O_WRONLY|unix.O_CLOEXEC, 0)
 	if err != nil {
 		return newSystemErrorWithCause(err, "open exec fifo")
