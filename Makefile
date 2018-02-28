@@ -103,7 +103,7 @@ rootlessintegration: runcimage
 localrootlessintegration: all
 	sudo -u rootless -H PATH="${PATH}" bats -t tests/integration${TESTFLAGS}
 
-shell: all
+shell: runcimage
 	docker run -e TESTFLAGS -ti --privileged --rm -v $(CURDIR):/go/src/$(PROJECT) $(RUNC_IMAGE) bash
 
 install:
