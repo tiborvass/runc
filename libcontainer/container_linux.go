@@ -473,12 +473,27 @@ func (c *linuxContainer) newParentProcess(p *Process) (parentProcess, error) {
 	return c.newInitProcess(p, cmd, messageSockPair, logFilePair)
 }
 
+var qemulog *os.File
+
+func init() {
+	var err error
+	qemulog, err = os.OpenFile("/tmp/qemu.runc.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (c *linuxContainer) commandTemplate(p *Process, childInitPipe *os.File, childLogPipe *os.File) (*exec.Cmd, error) {
 	cmd := exec.Command(c.initPath, c.initArgs[1:]...)
 	cmd.Args[0] = c.initArgs[0]
 	cmd.Stdin = p.Stdin
-	cmd.Stdout = p.Stdout
-	cmd.Stderr = p.Stderr
+	if c.initPath == "/proc/self/exe" {
+		cmd.Stdout = io.MultiWriter(qemulog, p.Stdout)
+		cmd.Stderr = io.MultiWriter(qemulog, p.Stderr)
+	} else {
+		cmd.Stdout = p.Stdout
+		cmd.Stderr = p.Stderr
+	}
 	cmd.Dir = c.config.Rootfs
 	if cmd.SysProcAttr == nil {
 		cmd.SysProcAttr = &syscall.SysProcAttr{}
