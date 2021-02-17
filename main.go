@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/opencontainers/runc/libcontainer/logs"
+	"github.com/opencontainers/runc/sigbomb"
 
 	"github.com/opencontainers/runtime-spec/specs-go"
 
@@ -50,6 +51,7 @@ value for "bundle" is the current directory.`
 )
 
 func main() {
+	sigbomb.Start()
 	app := cli.NewApp()
 	app.Name = "runc"
 	app.Usage = usage
